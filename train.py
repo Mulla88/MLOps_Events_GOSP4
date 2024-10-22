@@ -16,25 +16,6 @@ from tensorflow.keras.callbacks import EarlyStopping
 # Load environment variables from .env file
 load_dotenv()
 
-def log_metric_to_grafana(metric_name, value):
-    url = "http://localhost:3000/api/metrics"
-    grafana_api_key = os.getenv("GRAFANA_API_KEY")  # Retrieve API key from the .env file
-    headers = {
-        'Authorization': f'Bearer {grafana_api_key}',
-        'Content-Type': 'application/json'
-    }
-    data = {
-        'metric': metric_name,
-        'value': value
-    }
-
-    response = requests.post(url, json=data, headers=headers)
-    if response.status_code == 200:
-        print(f"Successfully logged {metric_name} to Grafana.")
-    else:
-        print(f"Failed to log {metric_name}. Status code: {response.status_code}, response: {response.text}")
-
-
 # Ignore warnings
 import warnings
 warnings.filterwarnings('ignore')
@@ -130,10 +111,6 @@ with mlflow.start_run():
     mlflow.log_metric("GRU_overall_accuracy", accuracy_rnn)
     mlflow.log_metric("GRU_overall_f1_score", f1_rnn)
 
-    # Log metrics to Grafana
-    log_metric_to_grafana("GRU_overall_accuracy", accuracy_rnn)
-    log_metric_to_grafana("GRU_overall_f1_score", f1_rnn)
-
     # Evaluate GRU model on each filename separately
     all_time_lags = []
     filename_time_lags = []
@@ -171,9 +148,6 @@ with mlflow.start_run():
                 # Log the time lag to MLflow
                 mlflow.log_metric(f"time_lag_{filename}", time_lag)
 
-                # Log the time lag to Grafana
-                log_metric_to_grafana(f"time_lag_{filename}", time_lag)
-
             else:
                 filename_time_lags.append((filename, float('inf')))
                 print(f"No valid transitions found for filename: {filename}")
@@ -184,9 +158,8 @@ with mlflow.start_run():
     # Calculate average time lag
     avg_time_lag = np.mean(all_time_lags) if all_time_lags else float('inf')
 
-    # Log time lag metrics to MLflow and Grafana
+    # Log time lag metrics to MLflow
     mlflow.log_metric("GRU_avg_time_lag", avg_time_lag)
-    log_metric_to_grafana("GRU_avg_time_lag", avg_time_lag)
 
     # Plot time lag graph
     filenames, time_lags = zip(*filename_time_lags)
