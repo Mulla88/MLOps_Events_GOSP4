@@ -1,0 +1,8 @@
+*.parquet
+mlruns/
+__pycache__/
+.vscode/
+airflow.db
+logs/
+dag_bag.log
+.env

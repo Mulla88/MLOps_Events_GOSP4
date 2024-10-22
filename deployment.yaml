@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rnn-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rnn-model
+  template:
+    metadata:
+      labels:
+        app: rnn-model
+    spec:
+      containers:
+      - name: rnn-model-container
+        image: my_rnn_model:latest
+        ports:
+        - containerPort: 5000
