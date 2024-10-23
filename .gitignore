@@ -7,3 +7,4 @@ logs/
 dag_bag.log
 .env
 mlflow.db
+jenkins_home/
