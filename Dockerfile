@@ -7,6 +7,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app/
 
+# Expose the MLflow tracking server port
 EXPOSE 5000
 
-CMD ["python", "train.py"]
+# Start MLflow server
+CMD mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./mlruns --host 0.0.0.0 & python train.py
