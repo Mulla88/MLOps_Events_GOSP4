@@ -18,14 +18,6 @@ pipeline {
             }
         }
 
-        stage('Set Kubernetes Context') {
-            steps {
-                script {
-                    // Set Kubernetes context to Minikube
-                    sh 'kubectl config use-context minikube'
-                }
-            }
-        }
         
         stage('Build Docker Image') {
             steps {
