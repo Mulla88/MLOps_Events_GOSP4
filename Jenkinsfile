@@ -10,7 +10,6 @@ pipeline {
         stage('Check Docker') {
             steps {
                 script {
-                    // Check if Docker is accessible and available
                     def dockerCheck = sh(script: 'docker --version', returnStatus: true)
                     if (dockerCheck != 0) {
                         error("Docker is not installed or accessible.")
@@ -18,40 +17,27 @@ pipeline {
                 }
             }
         }
-        
-        stage('Force Docker Permissions') {
+
+        stage('Set Kubernetes Context') {
             steps {
                 script {
-                    // Attempt to force Docker permissions (requires sudo or root access)
-                    try {
-                        // Add the jenkins user to the docker group
-                        sh 'sudo usermod -aG docker jenkins || true'
-                        
-                        // Ensure correct group permissions for the Docker socket
-                        sh 'sudo chown root:docker /var/run/docker.sock || true'
-                        
-                        // Restart Jenkins if necessary
-                        sh 'sudo service jenkins restart || true'
-                    } catch (Exception e) {
-                        echo "Failed to adjust Docker permissions, continuing to attempt Docker usage."
-                    }
+                    // Set Kubernetes context to Minikube
+                    sh 'kubectl config use-context minikube'
                 }
             }
         }
         
         stage('Build Docker Image') {
             steps {
-                // Build the Docker image, will fail if permissions aren't right
+                // Build the Docker image within the Minikube context
                 sh 'docker build -t my_rnn_model .'
             }
         }
-        
-        
+
         stage('Deploy to Kubernetes') {
             steps {
-                // Apply the Kubernetes deployment and service files
-                sh 'kubectl apply -f deployment.yaml'
-                sh 'kubectl apply -f service.yaml'
+                // Deploy the application to Minikube without validation
+                sh 'kubectl apply -f deployment.yaml --validate=false'
             }
         }
     }
