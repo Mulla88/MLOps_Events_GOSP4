@@ -3,7 +3,12 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
-                git branch: 'main', url: 'https://github.com/Mulla88/MLOps_Events_GOSP4'
+                git 'https://github.com/Mulla88/MLOps_Events_GOSP4'
+            }
+        }
+        stage('Check Docker') {
+            steps {
+                sh 'docker --version' // This will check if Docker is available
             }
         }
         stage('Build Docker Image') {
