@@ -85,11 +85,10 @@ with mlflow.start_run():
         X_train_rnn, 
         y_train, 
         validation_data=(X_test_rnn, y_test),  
-        epochs=50,  
+        epochs=1,  
         batch_size=64, 
         verbose=1, 
-        class_weight=class_weight, 
-        callbacks=[early_stopping]  
+        class_weight=class_weight 
     )
     print("Model training completed.")
 
