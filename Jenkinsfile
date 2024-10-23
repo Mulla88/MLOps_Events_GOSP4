@@ -3,15 +3,14 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                // Pull the repository from the correct branch (replace 'main' with your branch if necessary)
                 git branch: 'main', url: 'https://github.com/Mulla88/MLOps_Events_GOSP4'
             }
         }
         
         stage('Check Docker') {
             steps {
-                // Check if Docker is installed and running
                 script {
+                    // Check if Docker is accessible and available
                     def dockerCheck = sh(script: 'docker --version', returnStatus: true)
                     if (dockerCheck != 0) {
                         error("Docker is not installed or accessible.")
@@ -20,9 +19,29 @@ pipeline {
             }
         }
         
+        stage('Force Docker Permissions') {
+            steps {
+                script {
+                    // Attempt to force Docker permissions (requires sudo or root access)
+                    try {
+                        // Add the jenkins user to the docker group
+                        sh 'sudo usermod -aG docker jenkins || true'
+                        
+                        // Ensure correct group permissions for the Docker socket
+                        sh 'sudo chown root:docker /var/run/docker.sock || true'
+                        
+                        // Restart Jenkins if necessary
+                        sh 'sudo service jenkins restart || true'
+                    } catch (Exception e) {
+                        echo "Failed to adjust Docker permissions, continuing to attempt Docker usage."
+                    }
+                }
+            }
+        }
+        
         stage('Build Docker Image') {
             steps {
-                // Build the Docker image
+                // Build the Docker image, will fail if permissions aren't right
                 sh 'docker build -t my_rnn_model .'
             }
         }

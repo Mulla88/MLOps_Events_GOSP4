@@ -63,7 +63,7 @@ if mlflow.active_run() is not None:
     mlflow.end_run()
 
 with mlflow.start_run():
-    # Define the GRU model
+    # Define the RNN model
     rnn_model = Sequential()
     rnn_model.add(GRU(64, activation='relu', input_shape=(X_train_rnn.shape[1], X_train_rnn.shape[2])))
     rnn_model.add(Dropout(0.3))  # Dropout for regularization
