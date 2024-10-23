@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
-                git 'https://github.com/Mulla88/MLOps_Events_GOSP4'
+                git branch: 'main', url: 'https://github.com/Mulla88/MLOps_Events_GOSP4'
             }
         }
         stage('Build Docker Image') {
