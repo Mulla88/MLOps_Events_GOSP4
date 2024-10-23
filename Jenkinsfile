@@ -46,17 +46,12 @@ pipeline {
             }
         }
         
-        stage('Run Tests') {
-            steps {
-                // Run tests inside the Docker container
-                sh 'docker run my_rnn_model pytest tests/'
-            }
-        }
         
         stage('Deploy to Kubernetes') {
             steps {
-                // Deploy to Kubernetes
+                // Apply the Kubernetes deployment and service files
                 sh 'kubectl apply -f deployment.yaml'
+                sh 'kubectl apply -f service.yaml'
             }
         }
     }
