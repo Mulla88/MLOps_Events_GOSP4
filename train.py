@@ -85,7 +85,7 @@ with mlflow.start_run():
         X_train_rnn, 
         y_train, 
         validation_data=(X_test_rnn, y_test),  
-        epochs=1,  
+        epochs=2,  
         batch_size=64, 
         verbose=1, 
         class_weight=class_weight 
@@ -107,8 +107,8 @@ with mlflow.start_run():
     print(f"GRU - Overall F1 Score: {f1_rnn}")
 
     # Log metrics to MLflow
-    mlflow.log_metric("GRU_overall_accuracy", accuracy_rnn)
-    mlflow.log_metric("GRU_overall_f1_score", f1_rnn)
+    mlflow.log_metric("RNN_overall_accuracy", accuracy_rnn)
+    mlflow.log_metric("RNN_overall_f1_score", f1_rnn)
 
     # Evaluate GRU model on each filename separately
     all_time_lags = []
@@ -158,7 +158,7 @@ with mlflow.start_run():
     avg_time_lag = np.mean(all_time_lags) if all_time_lags else float('inf')
 
     # Log time lag metrics to MLflow
-    mlflow.log_metric("GRU_avg_time_lag", avg_time_lag)
+    mlflow.log_metric("RNN_avg_time_lag", avg_time_lag)
 
     # Plot time lag graph
     filenames, time_lags = zip(*filename_time_lags)
@@ -167,6 +167,6 @@ with mlflow.start_run():
     plt.xlabel('Filename')
     plt.ylabel('Time Lag (seconds)')
     plt.xticks(rotation=90)
-    plt.title(f'Time Lag per Filename for GRU Model')
+    plt.title(f'Time Lag per Filename for RNN Model')
     plt.tight_layout()
     plt.show()
